@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kena Prank!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      background: radial-gradient(circle at center, #1f0036, #000);
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      position: relative;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    img.friend {
+      width: clamp(120px, 30vw, 200px);
+      border-radius: 50%;
+      border: 5px solid #fff;
+      box-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+      margin-bottom: 1.5rem;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 8vw, 4rem);
+      color: #fff;
+      text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
+      animation: glow 2s infinite alternate;
+      margin-bottom: 2rem;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+      }
+      to {
+        text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+      }
+    }
+
+    button {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(45deg, #ff00ff, #00ffff);
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 15px #00ffff;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px #00ffff;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="content">
+    <img src="akbar.png" alt="Foto Akbar" class="friend">
+    <h1>Selamat Anda Kena Prank!</h1>
+    <button onclick="alert('Wkwkwkwk!')">Klik kalau shock</button>
+  </div>
+
+  <!-- Musik Prank -->
+  <audio id="prank-audio" src="prank.mp3" preload="auto"></audio>
+
+  <script>
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+
+    const particles = [];
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 1,
+        speedX: (Math.random() - 0.5) * 1.5,
+        speedY: (Math.random() - 0.5) * 1.5
+      });
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsl(${(p.x / canvas.width) * 360}, 100%, 50%)`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Otomatis putar musik saat interaksi pertama (wajib untuk mobile)
+    const audio = document.getElementById('prank-audio');
+    function playMusicOnce() {
+      audio.play().catch(() => {}); // Menghindari error autoplay
+      window.removeEventListener('click', playMusicOnce);
+      window.removeEventListener('touchstart', playMusicOnce);
+    }
+    window.addEventListener('click', playMusicOnce);
+    window.addEventListener('touchstart', playMusicOnce);
+  </script>
+</body>
+</html>
